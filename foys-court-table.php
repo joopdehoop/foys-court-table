@@ -34,7 +34,7 @@ function foys_render_baantabel() {
         }
         
         if (!$is_allowed) {
-            return '<p>Deze tabel is niet beschikbaar op dit pad.</p>';
+            return $current_path;
         }
     }
     
@@ -78,7 +78,7 @@ function foys_render_baantabel() {
                     <?php foreach ($banen as $baan): ?>
                         <?php $reservering_info = foys_get_reservering_info($baan['reservations'], $tijd); ?>
                         <td class="<?php echo $reservering_info ? 'bezet' : ''; ?>">
-                            <?php echo $reservering_info ? esc_html($reservering_info) : ''; ?>
+                            <?php echo $reservering_info ? wp_kses($reservering_info, ['br' => []]) : ''; ?>
                         </td>
                     <?php endforeach; ?>
                 </tr>
@@ -188,7 +188,7 @@ function foys_admin_init() {
     
     add_settings_section(
         'foys_main_section',
-        'API Instellingen',
+        'API instellingen',
         null,
         'foys_settings'
     );
@@ -203,7 +203,7 @@ function foys_admin_init() {
     
     add_settings_field(
         'foys_allowed_paths',
-        'Toegestane Paden voor Baantabel',
+        'Whitelist voor Baantabel met namen',
         'foys_allowed_paths_field',
         'foys_settings',
         'foys_main_section'
@@ -225,7 +225,7 @@ function foys_allowed_paths_field() {
 function foys_settings_page() {
     ?>
     <div class="wrap">
-        <h1>Foys Blokkenschema Instellingen</h1>
+        <h1>Foys Blokkenschema instellingen</h1>
         <form method="post" action="options.php">
             <?php
             settings_fields('foys_settings');

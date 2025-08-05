@@ -1,5 +1,4 @@
 .foys-tabel {
-    width: 100%;
     border-collapse: collapse;
     overflow-x: auto;
     display: block;
@@ -8,7 +7,7 @@
 .foys-tabel th, 
 .foys-tabel td {
     border: 1px solid #ccc;
-    padding: 5px;
+    padding: 1em 2em 1em 2em;
     text-align: center;
     font-size: 0.9em;
 }
@@ -21,5 +20,7 @@
 }
 
 .foys-tabel td.bezet {
-    background-color: #ffd5d5;
+    background-color: #0074c6;
+	color: white;
+	font-weight: bold;
 }
