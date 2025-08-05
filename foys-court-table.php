@@ -76,9 +76,28 @@ function foys_render_baantabel() {
                 <tr>
                     <td><?php echo esc_html($tijd); ?></td>
                     <?php foreach ($banen as $baan): ?>
-                        <?php $reservering_info = foys_get_reservering_info($baan['reservations'], $tijd); ?>
-                        <td class="<?php echo $reservering_info ? 'bezet' : ''; ?>">
-                            <?php echo $reservering_info ? wp_kses($reservering_info, ['br' => []]) : ''; ?>
+                        <?php 
+                        $spelers = foys_get_reservering_info($baan['reservations'], $tijd); 
+						$lastNames = [];
+						if (is_array($spelers)) { 
+							foreach ($spelers as $speler) {
+								$lastNames[] = $speler['lastName'];
+							}
+						}
+						$achternamen = implode("-", $lastNames);
+                        ?>
+                        <td class="<?php echo (!empty($achternamen) || $spelers == 'Bezet') ? 'bezet' : ''; ?>" data-lastname="<?php echo $spelers == 'Bezet' ? 'Bezet' : esc_attr($achternamen); ?>">
+                            <?php 
+                            if (empty($spelers)) {
+                                // Empty cell
+                            } elseif ($spelers == "Bezet") {
+                                echo "Bezet";
+                            } else {
+                                foreach ($spelers as $speler) {
+                                    echo esc_html($speler['fullName']); ?><br><?php
+                                }
+                            }
+                            ?>
                         </td>
                     <?php endforeach; ?>
                 </tr>
@@ -128,7 +147,7 @@ function foys_render_baantabel_anonymous() {
                 <tr>
                     <td><?php echo esc_html($tijd); ?></td>
                     <?php foreach ($banen as $baan): ?>
-                        <td class="<?php echo foys_is_bezet($baan['reservations'], $tijd) ? 'bezet' : ''; ?>">
+                        <td class="<?php echo foys_is_bezet($baan['reservations'], $tijd) ? 'bezet' : ''; ?>" data-lastname="Bezet">
                             <?php echo foys_is_bezet($baan['reservations'], $tijd) ? 'Bezet' : ''; ?>
                         </td>
                     <?php endforeach; ?>
@@ -145,17 +164,39 @@ function foys_get_reservering_info($reserveringen, $tijdvak) {
         $start = strtotime($res['startDateTime']);
         $eind  = strtotime($res['endDateTime']);
         $tijd  = strtotime(date('Y-m-d') . ' ' . $tijdvak);
+		$tussenvoegsels = ['van', 'van der', 'van de', 'de', 'den', 'von'];
 
         if ($tijd >= $start && $tijd < $eind) {
             $spelers = [];
             if (isset($res['players']) && is_array($res['players'])) {
                 foreach ($res['players'] as $player) {
                     if (isset($player['person']['fullName'])) {
-                        $spelers[] = $player['person']['fullName'];
+						
+                        // splits de naam op in een voor- en achternaam
+						$woorden = explode(' ', $player['person']['fullName']);
+						$aantal = count($woorden);
+
+						// Begin van achteren en zoek naar tussenvoegsel
+						$lastName = $woorden[$aantal - 1];
+						for ($i = $aantal - 2; $i >= 0; $i--) {
+							$deel = implode(' ', array_slice($woorden, $i, $aantal - $i));
+							if (in_array(strtolower($deel), $tussenvoegsels)) {
+								$lastName = $deel . ' ' . $lastName;
+							} else {
+								break;
+							}
+						}
+
+						$spelers[] = [
+							'fullName' => $player['person']['fullName'],
+							'lastName' => $lastName
+						];
+						
+						
                     }
                 }
             }
-            return !empty($spelers) ? implode('<br>', $spelers) : 'Bezet';
+            return !empty($spelers) ? $spelers : 'Bezet';
         }
     }
     return false;

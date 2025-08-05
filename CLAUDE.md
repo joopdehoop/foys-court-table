@@ -6,6 +6,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This is a WordPress plugin called "Foys Blokkenschema" that displays a responsive table showing squash court reservations for 5 courts based on the Foys JSON API.
 
+## Files and functions
+
+foys-court-table.php - contains the plugin, and the following functions:
+- foys_render_baantabel_anonymous - renders the anonymous version of the court reservations
+- foys_get_reservering_info($reserveringen, $tijdvak) - gets the information about a reservation
+- foys_admin_menu - adds the settings menu in the backend
+- foys_admin_init - initializes the admin menu
+- foys_allowed_paths_field - manages the field for whitelisted paths for the non-anonymous table
+- foys_settings_page - shows the settings page
+assets/frontend.css - contains the design
+
 ## Architecture
 
 - **Single file plugin**: `foys-court-table.php` contains the entire plugin
