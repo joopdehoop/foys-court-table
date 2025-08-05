@@ -8,7 +8,12 @@ Author: Elmer Smaling
 
 if (!defined('ABSPATH')) exit;
 
+add_action('wp_enqueue_scripts', 'foys_enqueue_scripts');
 add_shortcode('foys_baantabel', 'foys_render_baantabel');
+
+function foys_enqueue_scripts() {
+    wp_enqueue_style('foys-frontend', plugin_dir_url(__FILE__) . 'assets/frontend.css', [], '1.0');
+}
 
 function foys_render_baantabel() {
     $api_url = rest_url('foys-json/v1/reservations');
@@ -30,29 +35,6 @@ function foys_render_baantabel() {
 
     ob_start();
     ?>
-    <style>
-    .foys-tabel {
-        width: 100%;
-        border-collapse: collapse;
-        overflow-x: auto;
-        display: block;
-    }
-    .foys-tabel th, .foys-tabel td {
-        border: 1px solid #ccc;
-        padding: 5px;
-        text-align: center;
-        font-size: 0.9em;
-    }
-    .foys-tabel th {
-        background: #f3f3f3;
-        position: sticky;
-        top: 0;
-        z-index: 2;
-    }
-    .foys-tabel td.bezet {
-        background-color: #ffd5d5;
-    }
-    </style>
     <table class="foys-tabel">
         <thead>
             <tr>
