@@ -128,7 +128,15 @@ function foys_get_reservering_info($reserveringen, $tijdvak) {
         $tijd  = strtotime(date('Y-m-d') . ' ' . $tijdvak);
 
         if ($tijd >= $start && $tijd < $eind) {
-            return isset($res['name']) ? $res['name'] : 'Bezet';
+            $spelers = [];
+            if (isset($res['players']) && is_array($res['players'])) {
+                foreach ($res['players'] as $player) {
+                    if (isset($player['person']['fullName'])) {
+                        $spelers[] = $player['person']['fullName'];
+                    }
+                }
+            }
+            return !empty($spelers) ? implode('<br>', $spelers) : 'Bezet';
         }
     }
     return false;
