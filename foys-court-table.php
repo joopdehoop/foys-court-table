@@ -19,6 +19,25 @@ function foys_enqueue_scripts() {
 }
 
 function foys_render_baantabel() {
+    $allowed_paths = get_option('foys_allowed_paths', '');
+    $current_path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
+    
+    if (!empty($allowed_paths)) {
+        $paths = array_map('trim', explode("\n", $allowed_paths));
+        $is_allowed = false;
+        
+        foreach ($paths as $path) {
+            if (!empty($path) && strpos($current_path, $path) !== false) {
+                $is_allowed = true;
+                break;
+            }
+        }
+        
+        if (!$is_allowed) {
+            return '<p>Deze tabel is niet beschikbaar op dit pad.</p>';
+        }
+    }
+    
     $api_key = get_option('foys_api_key', '');
     $api_url = rest_url('foys-json/v1/reservations');
     
@@ -165,6 +184,7 @@ function foys_admin_menu() {
 
 function foys_admin_init() {
     register_setting('foys_settings', 'foys_api_key');
+    register_setting('foys_settings', 'foys_allowed_paths');
     
     add_settings_section(
         'foys_main_section',
@@ -180,12 +200,26 @@ function foys_admin_init() {
         'foys_settings',
         'foys_main_section'
     );
+    
+    add_settings_field(
+        'foys_allowed_paths',
+        'Toegestane Paden voor Baantabel',
+        'foys_allowed_paths_field',
+        'foys_settings',
+        'foys_main_section'
+    );
 }
 
 function foys_api_key_field() {
     $api_key = get_option('foys_api_key', '');
     echo '<input type="text" name="foys_api_key" value="' . esc_attr($api_key) . '" class="regular-text" />';
     echo '<p class="description">Voer uw API key in voor toegang tot de Foys reserveringsdata.</p>';
+}
+
+function foys_allowed_paths_field() {
+    $allowed_paths = get_option('foys_allowed_paths', '');
+    echo '<textarea name="foys_allowed_paths" rows="5" class="large-text">' . esc_textarea($allowed_paths) . '</textarea>';
+    echo '<p class="description">Voer de paden in waar de niet-anonieme baantabel getoond mag worden. Eén pad per regel. Bijvoorbeeld:<br>/squash/<br>/reserveringen/<br>/baantabel/</p>';
 }
 
 function foys_settings_page() {
