@@ -52,7 +52,22 @@ function foys_render_baantabel() {
     $data = json_decode(wp_remote_retrieve_body($response), true);
     if (!isset($data['inventoryItems'])) return '<p>Ongeldig gegevensformaat.</p>';
 
-    $banen = array_slice($data['inventoryItems'], 0, 5); // eerste 5 banen
+    // Merge courts with same 6-character prefix
+    $merged_courts = [];
+    foreach ($data['inventoryItems'] as $court) {
+        $prefix = substr($court['name'], 0, 6);
+        if (!isset($merged_courts[$prefix])) {
+            $merged_courts[$prefix] = [
+                'name' => $prefix,
+                'reservations' => []
+            ];
+        }
+        $merged_courts[$prefix]['reservations'] = array_merge(
+            $merged_courts[$prefix]['reservations'], 
+            $court['reservations'] ?? []
+        );
+    }
+    $banen = array_slice(array_values($merged_courts), 0, 5);
     $tijdvakken = [];
 
     for ($uur = 9; $uur < 23; $uur++) {
@@ -123,7 +138,22 @@ function foys_render_baantabel_anonymous() {
     $data = json_decode(wp_remote_retrieve_body($response), true);
     if (!isset($data['inventoryItems'])) return '<p>Ongeldig gegevensformaat.</p>';
 
-    $banen = array_slice($data['inventoryItems'], 0, 5);
+    // Merge courts with same 6-character prefix
+    $merged_courts = [];
+    foreach ($data['inventoryItems'] as $court) {
+        $prefix = substr($court['name'], 0, 6);
+        if (!isset($merged_courts[$prefix])) {
+            $merged_courts[$prefix] = [
+                'name' => $prefix,
+                'reservations' => []
+            ];
+        }
+        $merged_courts[$prefix]['reservations'] = array_merge(
+            $merged_courts[$prefix]['reservations'], 
+            $court['reservations'] ?? []
+        );
+    }
+    $banen = array_slice(array_values($merged_courts), 0, 5);
     $tijdvakken = [];
 
     for ($uur = 9; $uur < 23; $uur++) {

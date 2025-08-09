@@ -20,7 +20,7 @@ assets/frontend.css - contains the design
 ## Architecture
 
 - **Single file plugin**: `foys-court-table.php` contains the entire plugin
-- **WordPress shortcode**: `[foys_baantabel]` renders the reservation table
+- **WordPress shortcodes**: `[foys_baantabel]` renders the reservation table, [foys_baantabel_anonymous] offers an anonymous version
 - **API integration**: Fetches data from WordPress REST API endpoint `foys-json/v1/reservations`
 - **Time slots**: Displays 30-minute intervals from 9:00 to 22:30
 - **Court display**: Shows first 5 courts from the API response
