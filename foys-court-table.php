@@ -8,6 +8,8 @@ Author: Elmer Smaling
 
 if (!defined('ABSPATH')) exit;
 
+date_default_timezone_set('Europe/Amsterdam'); // put at bootstrap
+
 add_action('wp_enqueue_scripts', 'foys_enqueue_scripts');
 add_shortcode('foys_baantabel', 'foys_render_baantabel');
 add_shortcode('foys_baantabel_anonymous', 'foys_render_baantabel_anonymous');
@@ -231,6 +233,18 @@ function foys_get_reservering_info($reserveringen, $tijdvak) {
     }
     return false;
 }
+
+function foys_set_reservering_naam($reserveringen, $tijdvak, $naam) {
+    foreach ($reserveringen as $key => $res) {
+        foreach($res['players'] as $player) {
+            if (isset($player['person']['fullName'])) {
+                $reserveringen[$key]['players']['person']['fullName'] = $naam;
+            }
+        }
+    }
+    return $reserveringen;
+}
+
 
 function foys_is_bezet($reserveringen, $tijdvak) {
     foreach ($reserveringen as $res) {

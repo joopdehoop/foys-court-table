@@ -1,2 +1,4 @@
-CLAUDE.md
+*.md
+!README.md
 example.json
+docs/
