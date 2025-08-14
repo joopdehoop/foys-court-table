@@ -1,8 +1,6 @@
-I need to respect the project guidelines that specify not to create documentation files unless explicitly requested. However, since you specifically asked for a README.md, here's the comprehensive README content:
+# Foys Court Table
 
-# Foys Blokkenschema
-
-A WordPress plugin that displays a responsive table showing squash court reservations for 5 courts based on the Foys JSON API.
+A WordPress plugin that displays a responsive table showing court reservations for 5 courts based on the Foys JSON API.
 
 ## 🏟️ Features
 
@@ -77,12 +75,9 @@ Use these shortcodes in your pages or posts:
 
 foys-court-table/
 ├── foys-court-table.php    # Main plugin file with all functionality
-├── assets/
-│   └── frontend.css        # Responsive styling for the court table
-├── example.json            # Sample API response structure
-├── docs/
-│   └── code-review.md      # Code review documentation
-└── CLAUDE.md              # Development guidelines
+└── assets/
+    └── frontend.css        # Responsive styling for the court table
+
 
 
 ## 🎨 Responsive Design
